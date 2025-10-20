@@ -24,9 +24,60 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", (req, res) => {
+  const now = new Date();
+  const newDate = now.getTime()
+  const gmtDateee = new Date().toUTCString();
+
+  res.json({
+    unix: newDate, utc: gmtDateee
+  })
+})
+
+app.get("/api/:date?", (req, res) => {
+  const { date } = req.params
+  const gmtDate = new Date(date)
+  const unixWow = new Date(Number(date))
+
+  //Full time and date and day and year
+  const unixNice = unixWow.toUTCString()
+  const gmtToString = gmtDate.toUTCString()
+// unix epoch
+  const unixTime = Number(gmtDate.getTime())
+
+   if(gmtToString !== "Invalid Date") {
+   return res.json({
+    unix: unixTime, utc: gmtToString
+  })}
+  else if(unixNice !== "Invalid Date"){
+    return res.json({
+    unix: Number(date), utc: unixNice
+    })
+  }
+  else {
+    return res.json({
+    "error": gmtToString
+  })
+  }
+})
+
+
+
+// app.get("/api/:unix?", (req, res) => {
+//   const { unix } = req.params
+//   const dateObj = new Date(Number(unix));
+//   const gmtDateString = dateObj.toUTCString();
+ 
+//   res.json({
+//     unix: unix, utc: gmtDateString
+//   })
+// })
 
 
 // Listen on port set in environment variable or default to 3000
+
+
+
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
